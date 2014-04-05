@@ -6,13 +6,17 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 
 /**
  * @auhtor Johannes Donath <johannesd@evil-co.com>
@@ -129,6 +133,36 @@ public class BlockEventListener implements Listener {
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Handles item movements.
+	 * @param event
+	 */
+	@EventHandler (priority = EventPriority.HIGHEST)
+	public void onInventoryMoveItem (InventoryMoveItemEvent event) {
+		// skip all holders without a BlockState
+		if (!(event.getSource ().getHolder () instanceof BlockState)) return;
+		if (event.getDestination ().getHolder () instanceof Player) return;
+
+		// get block from state
+		Block block = ((BlockState) event.getSource ().getHolder ()).getBlock ();
+
+		// check protection
+		ProtectionHandle handle = this.plugin.getProtectionHandle (block);
+
+		// verify handle
+		if (handle == null) return;
+
+		// check destination
+		if (event.getDestination ().getHolder () instanceof BlockState) {
+			// get destination handle
+			ProtectionHandle destinationHandle = this.plugin.getProtectionHandle (((BlockState) event.getDestination ().getHolder ()).getBlock ());
+
+			// cancel unauthorized movements
+			if (destinationHandle == null || !destinationHandle.getOwnerName ().equalsIgnoreCase (handle.getOwnerName ())) event.setCancelled (true);
+		} else
+			event.setCancelled (true);
 	}
 
 	/**
