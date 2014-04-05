@@ -1,0 +1,14 @@
+1.0
+    + Initial Release
+
+1.1
+    + Added support for double chests
+    + Added protection against hoppers and other mechanics which move items
+    - Rewrote translation system to fix reload bug
+
+Legend:
+    + New Feature / Improvement
+    - Deletion / Deprecation / Bugfix
+    % Note
+    & Warning
+    \ In Progress (This information is only usefull for developers)
