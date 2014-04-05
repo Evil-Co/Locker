@@ -5,7 +5,7 @@
 	<!-- Artifact Information -->
 	<groupId>com.evilco.bukkit</groupId>
 	<artifactId>locker</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 
 	<!-- Build Properties -->
 	<properties>
