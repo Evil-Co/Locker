@@ -19,6 +19,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.MetricsLite;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -75,6 +76,16 @@ public class LockerPlugin extends JavaPlugin {
 	 * @return
 	 */
 	public ProtectionHandle getProtectionHandle (Block block) {
+		return this.getProtectionHandle (block, null);
+	}
+
+	/**
+	 * Searches for a protection handle.
+	 * @param block
+	 * @param original
+	 * @return
+	 */
+	public ProtectionHandle getProtectionHandle (Block block, @Nullable Block original) {
 		// verify
 		Preconditions.checkNotNull (block, "block");
 
@@ -101,13 +112,16 @@ public class LockerPlugin extends JavaPlugin {
 			}
 		}
 
+		// stop execution if original is set
+		if (original != null) return null;
+
 		// search protection for connected chest
 		if (block.getType () == Material.CHEST || block.getType () == Material.TRAPPED_CHEST) {
 			for (BlockFace face : FACES) {
 				current = block.getRelative (face);
 
 				// check
-				if (current.getType () == block.getType ()) return this.getProtectionHandle (current);
+				if (current.getType () == block.getType ()) return this.getProtectionHandle (current, block);
 			}
 		}
 
