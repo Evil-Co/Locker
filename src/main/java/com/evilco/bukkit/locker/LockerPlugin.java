@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 /**
  * @auhtor Johannes Donath <johannesd@evil-co.com>
@@ -159,7 +160,7 @@ public class LockerPlugin extends JavaPlugin {
 	 * @return
 	 */
 	public String getTranslation (String name) {
-		if (!this.translation.containsKey (name)) return name;
+		if (this.translation == null || !this.translation.containsKey (name)) return name;
 		return this.translation.getString (name);
 	}
 
@@ -184,7 +185,12 @@ public class LockerPlugin extends JavaPlugin {
 		this.getServer ().getPluginManager ().registerEvents ((new WorldEventListener (this)), this);
 
 		// load translation
-		this.translation = ResourceBundle.getBundle ("messages", Locale.ENGLISH);
+		try {
+			// load default translation
+			this.translation = ResourceBundle.getBundle ("com.evilco.bukkit.locker.translation.Messages", Locale.getDefault (), this.getClassLoader ());
+		} catch (Exception ex) {
+			this.getLogger ().log (Level.SEVERE, "Could not load plugin translations.", ex);
+		}
 
 		// load metrics
 		try {

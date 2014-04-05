@@ -110,16 +110,6 @@
 				</includes>
 			</resource>
 
-			<!-- Translations -->
-			<resource>
-				<targetPath>.</targetPath>
-				<filtering>false</filtering>
-				<directory>${basedir}/src/main/resources/translation</directory>
-				<includes>
-					<include>*.properties</include>
-				</includes>
-			</resource>
-
 			<!-- Include project files -->
 			<resource>
 				<targetPath>.</targetPath>
