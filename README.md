@@ -1,4 +1,4 @@
-Locker for Bukkit/Spigot [![Build Status](http://assets.evil-co.com/build/FLOW-MASTER.png)](http://www.evil-co.com/ci/browse/BLCK-MASTER)
+Locker for Bukkit/Spigot [![Build Status](http://assets.evil-co.com/build/BLCK-MASTER.png)](http://www.evil-co.com/ci/browse/BLCK-MASTER)
 ===============
 Locker provides an easy to use inventory protection solution for Bukkit and Spigot servers.
 
