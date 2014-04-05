@@ -4,10 +4,7 @@ import com.evilco.bukkit.locker.LockerPlugin;
 import com.evilco.bukkit.locker.ProtectionHandle;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
+import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -142,11 +139,11 @@ public class BlockEventListener implements Listener {
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onInventoryMoveItem (InventoryMoveItemEvent event) {
 		// skip all holders without a BlockState
-		if (!(event.getSource ().getHolder () instanceof BlockState)) return;
+		if (!(event.getSource ().getHolder () instanceof BlockState) && !(event.getSource ().getHolder () instanceof DoubleChest)) return;
 		if (event.getDestination ().getHolder () instanceof Player) return;
 
 		// get block from state
-		Block block = ((BlockState) event.getSource ().getHolder ()).getBlock ();
+		Block block = (event.getSource ().getHolder () instanceof DoubleChest ? ((BlockState) ((DoubleChest) event.getSource ().getHolder()).getLeftSide ()) : ((BlockState) event.getSource ().getHolder ())).getBlock ();
 
 		// check protection
 		ProtectionHandle handle = this.plugin.getProtectionHandle (block);
