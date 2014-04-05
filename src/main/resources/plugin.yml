@@ -1,0 +1,12 @@
+name: Locker
+description: Provides a simple protection mechanism for players.
+main: com.evilco.bukkit.locker.LockerPlugin
+version: "${project.version}"
+depend: [ProtocolLib, Vault]
+permissions:
+    locker.use:
+        description: Allows users to create and remove locked inventories.
+        default: true
+    locker.override:
+        description: Allows users to access and remove locked inventories created by others.
+        default: op
