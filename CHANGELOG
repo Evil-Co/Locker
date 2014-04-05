@@ -6,6 +6,9 @@
     + Added protection against hoppers and other mechanics which move items
     - Rewrote translation system to fix reload bug
 
+1.1.1
+    - Fixed a security issue which allows hoppers to move items out of double chests.
+
 Legend:
     + New Feature / Improvement
     - Deletion / Deprecation / Bugfix
