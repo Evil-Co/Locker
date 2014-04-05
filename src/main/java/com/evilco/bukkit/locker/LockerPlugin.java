@@ -101,6 +101,16 @@ public class LockerPlugin extends JavaPlugin {
 			}
 		}
 
+		// search protection for connected chest
+		if (block.getType () == Material.CHEST || block.getType () == Material.TRAPPED_CHEST) {
+			for (BlockFace face : FACES) {
+				current = block.getRelative (face);
+
+				// check
+				if (current.getType () == block.getType ()) return this.getProtectionHandle (current);
+			}
+		}
+
 		// no protection found
 		return null;
 	}
