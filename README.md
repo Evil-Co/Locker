@@ -16,8 +16,8 @@ be sure to add Maven to your "PATH".
 Contributing
 ------------
 
-We happily accept contributions. The best way to do this is to fork Flowerpot
+We happily accept contributions. The best way to do this is to fork Locker
 on GitHub, add your changes, and then submit a pull request. We'll look at it,
-make comments, and merge it into Flowerpot if everything works out.
+make comments, and merge it into Locker if everything works out.
 
 By submitting code, you agree to license your code under the Apache 2.0 License.
