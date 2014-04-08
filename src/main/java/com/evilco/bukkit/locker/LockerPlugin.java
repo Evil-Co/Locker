@@ -119,6 +119,9 @@ public class LockerPlugin extends JavaPlugin {
 		// search protection for connected chest
 		if (block.getType () == Material.CHEST || block.getType () == Material.TRAPPED_CHEST) {
 			for (BlockFace face : FACES) {
+				// skip up and down
+				if (face == BlockFace.UP || face == BlockFace.DOWN) continue;
+
 				current = block.getRelative (face);
 
 				// check
