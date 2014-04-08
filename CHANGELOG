@@ -9,6 +9,9 @@
 1.1.1
     - Fixed a security issue which allows hoppers to move items out of double chests.
 
+1.1.2
+    - Fixed a security issue which allows access to double chests placed on top of each other
+
 Legend:
     + New Feature / Improvement
     - Deletion / Deprecation / Bugfix
