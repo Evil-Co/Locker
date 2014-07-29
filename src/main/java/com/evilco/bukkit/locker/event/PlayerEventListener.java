@@ -52,7 +52,7 @@ public class PlayerEventListener implements Listener {
 		if (handle == null) return;
 
 		// verify access
-		if (!handle.hasAccessPermissions (event.getPlayer ())) {
+		if (!handle.hasAccessPermissions (event.getPlayer ()) && !this.plugin.getPermission ().has (event.getPlayer (), "locker.override")) {
 			// create update packet
 			PacketContainer packetContainer = this.plugin.getProtocolManager ().createPacket (PacketType.Play.Server.UPDATE_SIGN);
 
