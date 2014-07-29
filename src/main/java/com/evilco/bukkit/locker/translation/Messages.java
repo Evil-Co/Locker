@@ -14,6 +14,7 @@ public class Messages extends ListResourceBundle {
 	@Override
 	protected Object[][] getContents () {
 		return new Object[][] {
+			{"plugin.migrated",				"Your protection has been migrated."},
 			{"protection.accessDenied",			"No Access"},
 			{"protection.invalid",				"Invalid"},
 			{"protection.permissions",			"You do not have permissions to protect inventories."},

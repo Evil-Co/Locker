@@ -6,9 +6,11 @@ import com.evilco.bukkit.locker.event.BlockEventListener;
 import com.evilco.bukkit.locker.event.EntityEventListener;
 import com.evilco.bukkit.locker.event.PlayerEventListener;
 import com.evilco.bukkit.locker.event.WorldEventListener;
+import com.evilco.bukkit.locker.packet.SignSanityPacketListener;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -72,6 +74,48 @@ public class LockerPlugin extends JavaPlugin {
 	}
 
 	/**
+	 * Returns a protection handle based on a block state.
+	 * @param state The block state.
+	 * @return The protection handle.
+	 */
+	public ProtectionHandle getProtectionHandle (BlockState state) {
+		// verify
+		Preconditions.checkNotNull (state, "state");
+
+		// verify
+		if (state == null || !(state instanceof Sign)) return null;
+
+		// cast
+		Sign sign = ((Sign) state);
+
+		// verify
+		if (!sign.getLine (0).equalsIgnoreCase (PROTECTION_PREFIX)) return null;
+
+		// get handle
+		return (new ProtectionHandle (((Sign) state), state.getLocation ()));
+	}
+
+	/**
+	 * Returns a protection handle based on a location.
+	 * @param location The block location.
+	 * @return The protection handle.
+	 */
+	public ProtectionHandle getProtectionHandle (Location location) {
+		// verify
+		Preconditions.checkNotNull (location, "location");
+
+		// get block state
+		BlockState state = location.getBlock ().getState ();
+
+		// get handle
+		try {
+			return this.getProtectionHandle (state);
+		} catch (IllegalArgumentException ex) {
+			return null;
+		}
+	}
+
+	/**
 	 * Searches for a protection handle.
 	 * @param block
 	 * @return
@@ -103,14 +147,11 @@ public class LockerPlugin extends JavaPlugin {
 			// get block
 			current = block.getRelative (face);
 
-			// check
-			if (current.getType () == Material.WALL_SIGN || current.getType () == Material.SIGN_POST) {
-				// get sign
-				Sign sign = ((Sign) current.getState ());
+			// get handle
+			ProtectionHandle handle = this.getProtectionHandle (current.getState ());
 
-				// verify sign
-				if (sign.getLine (0).equalsIgnoreCase (PROTECTION_PREFIX)) return (new ProtectionHandle ((sign.getLine (2) + sign.getLine (3)), current.getLocation ()));
-			}
+			// check
+			if (handle != null) return handle;
 		}
 
 		// stop execution if original is set
@@ -186,6 +227,9 @@ public class LockerPlugin extends JavaPlugin {
 		this.getServer ().getPluginManager ().registerEvents ((new EntityEventListener (this)), this);
 		this.getServer ().getPluginManager ().registerEvents ((new PlayerEventListener (this)), this);
 		this.getServer ().getPluginManager ().registerEvents ((new WorldEventListener (this)), this);
+
+		// register packet listeners
+		protocolManager.addPacketListener (new SignSanityPacketListener (this));
 
 		// load translation
 		try {

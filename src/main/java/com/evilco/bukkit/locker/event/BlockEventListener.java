@@ -4,16 +4,20 @@ import com.evilco.bukkit.locker.LockerPlugin;
 import com.evilco.bukkit.locker.ProtectionHandle;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+
+import java.util.List;
 
 /**
  * @auhtor Johannes Donath <johannesd@evil-co.com>
@@ -42,41 +46,20 @@ public class BlockEventListener implements Listener {
 	public void onBlockBreak (BlockBreakEvent event) {
 		// handle signs
 		if (event.getBlock ().getType () == Material.SIGN_POST || event.getBlock ().getType () == Material.WALL_SIGN) {
-			// get sign
-			Sign sign = ((Sign) event.getBlock ().getState ());
+			// get protection handle
+			ProtectionHandle handle = this.plugin.getProtectionHandle (event.getBlock ().getState ());
 
-			// check for protection
-			if (!sign.getLine (0).equalsIgnoreCase (LockerPlugin.PROTECTION_PREFIX)) return;
-
-			// check protection
-			for (BlockFace face : LockerPlugin.FACES) {
-				Block current = event.getBlock ().getRelative (face);
-
-				// can be protected?
-				if (!this.plugin.isProtectable (current)) continue;
-
-				// verify protection contents
-				String username = (sign.getLine (2) + sign.getLine (3));
-				if ((!username.equalsIgnoreCase (event.getPlayer ().getName ()) || !this.plugin.getPermission ().has (event.getPlayer (), "locker.use")) && !this.plugin.getPermission ().has (event.getPlayer (), "locker.override")) {
-					// notify user
-					event.getPlayer ().sendMessage (ChatColor.RED + this.plugin.getTranslation ("protection.warning"));
-
-					// cancel event
-					event.setCancelled (true);
-
-					// stop execution
-					return;
-				}
-
+			// verify
+			if (handle != null && !handle.isOwner (event.getPlayer ())) {
 				// notify user
-				event.getPlayer ().sendMessage (ChatColor.YELLOW + this.plugin.getTranslation ("protection.remove"));
+				event.getPlayer ().sendMessage (ChatColor.RED + this.plugin.getTranslation ("protection.warning"));
 
-				// stop execution
+				// cancel event
+				event.setCancelled (true);
+
+				// stop further execution
 				return;
 			}
-
-			// stop execution
-			return;
 		}
 
 		// get protection handle
@@ -157,7 +140,7 @@ public class BlockEventListener implements Listener {
 			ProtectionHandle destinationHandle = this.plugin.getProtectionHandle (((BlockState) event.getDestination ().getHolder ()).getBlock ());
 
 			// cancel unauthorized movements
-			if (destinationHandle == null || !destinationHandle.getOwnerName ().equalsIgnoreCase (handle.getOwnerName ())) event.setCancelled (true);
+			if (destinationHandle == null || destinationHandle.getOwnerID () == null || handle.getOwnerID () == null || !destinationHandle.getOwnerID ().equals (handle.getOwnerID ())) event.setCancelled (true);
 		} else
 			event.setCancelled (true);
 	}
@@ -186,39 +169,14 @@ public class BlockEventListener implements Listener {
 			return;
 		}
 
-		// fix if empty
-		if (event.getLine (1).isEmpty () && event.getLine (2).isEmpty ()) {
-			// set new text
-			event.setLine (0, "");
-			event.setLine (1, ChatColor.RED + "[Locker]");
-			event.setLine (2, ChatColor.RED + this.plugin.getTranslation ("protection.invalid"));
-			event.setLine (3, "");
+		// create new handle
+		ProtectionHandle handle = new ProtectionHandle (event.getPlayer (), event.getBlock ().getLocation ());
 
-			// stop execution
-			return;
-		}
+		// update text
+		List<String> signText = handle.buildSignText ();
 
-		// shift lines
-		if (!event.getLine (1).isEmpty () && event.getLine (2).isEmpty ()) {
-			// set new text
-			event.setLine (3, event.getLine (2));
-			event.setLine (2, event.getLine (1));
-			event.setLine (1, "");
-		}
-
-		// build username
-		String username = (event.getLine (2) + event.getLine (3));
-
-		// verify username
-		if (!username.equalsIgnoreCase (event.getPlayer ().getName ()) && !this.plugin.getPermission ().has (event.getPlayer (), "locker.override")) {
-			// set new text
-			event.setLine (0, "");
-			event.setLine (1, ChatColor.RED + "[Locker]");
-			event.setLine (2, ChatColor.RED + this.plugin.getTranslation ("protection.invalid"));
-			event.setLine (3, "");
-
-			// stop execution
-			return;
+		for (int i = 0; i < signText.size (); i++) {
+			event.setLine (i, signText.get (i));
 		}
 	}
 }
