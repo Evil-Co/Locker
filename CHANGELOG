@@ -12,9 +12,14 @@
 1.1.2
     - Fixed a security issue which allows access to double chests placed on top of each other
 
+1.2.0
+    + Added UUID support
+    + Added automatic migration support
+    + Added a visual indication for migrated/non-migrated chests
+
 Legend:
     + New Feature / Improvement
     - Deletion / Deprecation / Bugfix
     % Note
     & Warning
-    \ In Progress (This information is only usefull for developers)
+    \ In Progress (This information is only useful for developers)
